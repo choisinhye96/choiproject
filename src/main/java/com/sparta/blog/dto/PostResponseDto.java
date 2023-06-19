@@ -18,5 +18,13 @@ public class PostResponseDto {
         this.password = post.getPassword();
         this.contents = post.getContents();
     }
+
+    public PostResponseDto(Long id, String title, String username, String contents, String password) {
+        this.id = id;
+        this.title = title;
+        this.username = username;
+        this.contents = contents;
+        this.password = password;
+    }
 }
 
