@@ -17,23 +17,28 @@ public class PostController {
         this.postService = postService;
     }
 
-    @PostMapping("/posts")
+    @PostMapping("/posts") //글 등록
     public PostResponseDto createPost(@RequestBody PostRequestDto requestDto) {
         return postService.createPost(requestDto);
     }
 
-    @GetMapping("/posts")
+    @GetMapping("/posts") //글 조회
     public List<PostResponseDto> getPosts() {
         return postService.getPost();
     }
 
-    @PutMapping("/posts/{id}")
+    @PutMapping("/posts/{id}") //글 수정
     public Long updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
         return postService.updatePost(id, requestDto);
     }
 
-    @DeleteMapping("/posts/{id}")
+    @DeleteMapping("/posts/{id}") //글 삭제
     public Long deletePost(@PathVariable Long id) {
         return postService.deletePost(id);
     }
+
+//    @GetMapping("/posts/check/{id}/{password}")
+//    public boolean checkPassword(@PathVariable Long id,@PathVariable String password) {
+//        return postService.checkPassword(id, password);
+//    }
 }

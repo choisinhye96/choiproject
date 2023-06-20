@@ -11,7 +11,7 @@ public class PostResponseDto {
     private String password;
     private String contents;
 
-    public PostResponseDto(Post post) {
+    public PostResponseDto(Post post) {// entity -> dto
         this.id = post.getId();
         this.title = post.getTitle();
         this.username = post.getUsername();
