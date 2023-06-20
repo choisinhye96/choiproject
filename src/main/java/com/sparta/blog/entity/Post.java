@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "blog") // 매핑할 테이블의 이름을 지정
 @NoArgsConstructor //기본 생성자를 만들어줌
-public class Post {
+public class Post extends Timestamped{
     //글 고유 아이디
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
