@@ -3,7 +3,6 @@ package com.sparta.blog.controller;
 import com.sparta.blog.dto.PostRequestDto;
 import com.sparta.blog.dto.PostResponseDto;
 import com.sparta.blog.service.PostService;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,8 +13,8 @@ public class PostController {
 
     private final PostService postService;
 
-    public PostController(JdbcTemplate jdbcTemplate) {
-        this.postService = new PostService(jdbcTemplate);
+    public PostController(PostService postService) {
+        this.postService = postService;
     }
 
     @PostMapping("/posts")

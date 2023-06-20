@@ -4,15 +4,14 @@ import com.sparta.blog.dto.PostRequestDto;
 import com.sparta.blog.dto.PostResponseDto;
 import com.sparta.blog.entity.Post;
 import com.sparta.blog.repository.PostRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 
 public class PostService {
     private final PostRepository postRepository;
 
-    public PostService(JdbcTemplate jdbcTemplate) {
-        this.postRepository = new PostRepository(jdbcTemplate);
+    public PostService(PostRepository postRepository) {
+        this.postRepository = postRepository;
     }
 
 
