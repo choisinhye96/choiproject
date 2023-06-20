@@ -12,33 +12,29 @@ import java.util.List;
 @RequestMapping("/api")
 public class PostController {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final PostService postService;
 
     public PostController(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+        this.postService = new PostService(jdbcTemplate);
     }
 
     @PostMapping("/posts")
     public PostResponseDto createPost(@RequestBody PostRequestDto requestDto) {
-        PostService postService = new PostService(jdbcTemplate); //인스턴스화
         return postService.createPost(requestDto);
     }
 
     @GetMapping("/posts")
     public List<PostResponseDto> getPosts() {
-        PostService postService = new PostService(jdbcTemplate);
         return postService.getPost();
     }
 
     @PutMapping("/posts/{id}")
     public Long updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
-        PostService postService = new PostService(jdbcTemplate);
         return postService.updatePost(id, requestDto);
     }
 
     @DeleteMapping("/posts/{id}")
     public Long deletePost(@PathVariable Long id) {
-        PostService postService = new PostService(jdbcTemplate);
         return postService.deletePost(id);
     }
 }

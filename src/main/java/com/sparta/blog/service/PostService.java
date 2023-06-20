@@ -9,10 +9,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 
 public class PostService {
-    private final JdbcTemplate jdbcTemplate;
+    private final PostRepository postRepository;
 
     public PostService(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+        this.postRepository = new PostRepository(jdbcTemplate);
     }
 
 
@@ -22,7 +22,6 @@ public class PostService {
         Post post = new Post(requestDto);
 
         // DB 저장
-        PostRepository postRepository = new PostRepository(jdbcTemplate);
         Post savePost = postRepository.save(post);
 
         // Entity -> ResponseDto
@@ -33,12 +32,10 @@ public class PostService {
 
     public List<PostResponseDto> getPost() {
         // DB 조회
-        PostRepository postRepository = new PostRepository(jdbcTemplate);
         return postRepository.findAll();
     }
 
     public Long updatePost(Long id, PostRequestDto requestDto) {
-        PostRepository postRepository = new PostRepository(jdbcTemplate);
         // 해당 포스트가 DB에 존재하는지 확인
         Post post = postRepository.findById(id);
         if(post != null) {
@@ -51,9 +48,7 @@ public class PostService {
         }
     }
 
-    public Long deletePost(Long id) {
-        PostRepository postRepository = new PostRepository(jdbcTemplate);
-        // 해당 포스트가 DB에 존재하는지 확인
+    public Long deletePost(Long id) {// 해당 포스트가 DB에 존재하는지 확인
         Post post = postRepository.findById(id);
         if(post != null) {
             // post 삭제
