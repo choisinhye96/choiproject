@@ -4,9 +4,11 @@ import com.sparta.blog.dto.PostRequestDto;
 import com.sparta.blog.dto.PostResponseDto;
 import com.sparta.blog.entity.Post;
 import com.sparta.blog.repository.PostRepository;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class PostService {
     private final PostRepository postRepository;
 
