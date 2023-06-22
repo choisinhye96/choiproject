@@ -22,23 +22,26 @@ public class PostController {
         return postService.createPost(requestDto);
     }
 
-    @GetMapping("/posts") //글 조회
-    public List<PostResponseDto> getPosts() {
-        return postService.getPost();
+    @GetMapping("/posts") //글 전체 조회
+    public List<PostResponseDto> getPostList() {
+        return postService.getPostListV2();
+    }
+
+    @GetMapping("/posts/{id}") //글 단건 조회
+    public PostResponseDto getPosts(@PathVariable Long id) {
+        return postService.getPost(id);
     }
 
     @PutMapping("/posts/{id}") //글 수정
-    public Long updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
+    public PostResponseDto updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
         return postService.updatePost(id, requestDto);
     }
 
     @DeleteMapping("/posts/{id}") //글 삭제
-    public Long deletePost(@PathVariable Long id) {
-        return postService.deletePost(id);
+    public PostResponseDto deletePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
+        postService.deletePost(id, requestDto.getPassword());
+        return new PostResponseDto(true);
     }
 
-//    @GetMapping("/posts/check/{id}/{password}")
-//    public boolean checkPassword(@PathVariable Long id,@PathVariable String password) {
-//        return postService.checkPassword(id, password);
-//    }
+
 }

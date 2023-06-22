@@ -4,11 +4,9 @@ import com.sparta.blog.dto.PostRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity // JPA가 관리할 수 있는 Entity 클래스 지정
 @Getter
-@Setter
 @Table(name = "blog") // 매핑할 테이블의 이름을 지정
 @NoArgsConstructor //기본 생성자를 만들어줌
 public class Post extends Timestamped{
@@ -36,10 +34,21 @@ public class Post extends Timestamped{
         this.password = requestDto.getPassword();
     }
 
-    public void update(PostRequestDto requestDto) {
-        this.title = requestDto.getTitle();
-        this.username = requestDto.getUsername();
-        this.contents = requestDto.getContents();
-        this.password = requestDto.getPassword();
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
+    public void checkPassword(String inputPassword) {
+        if (!password.equals(inputPassword)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
     }
 }
