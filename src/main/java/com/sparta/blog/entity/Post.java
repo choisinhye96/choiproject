@@ -17,38 +17,29 @@ public class Post extends Timestamped{
     //글 제목
     @Column(name = "title", nullable = false)
     private String title;
-    //유저 이름
-    @Column(name = "username", nullable = false)
-    private String username;
     //글 내용
     @Column(name = "contents", nullable = false, length = 500)
     private String contents;
-    //비밀번호
-    @Column(name = "password", nullable = false)
-    private String password;
+
+    @OneToOne
+    @JoinColumn(name = "userId")
+    private User user;
+
 
     public Post(PostRequestDto requestDto) {
         this.title = requestDto.getTitle();
-        this.username = requestDto.getUsername();
         this.contents = requestDto.getContents();
-        this.password = requestDto.getPassword();
     }
 
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public void setContents(String contents) {
         this.contents = contents;
     }
 
-    public void checkPassword(String inputPassword) {
-        if (!password.equals(inputPassword)) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+    public void setUser(User user) {
+        this.user = user;
     }
 }
