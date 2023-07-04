@@ -1,83 +1,72 @@
 package com.sparta.blog.service;
 
+import com.sparta.blog.dto.PostListResponseDto;
 import com.sparta.blog.dto.PostRequestDto;
 import com.sparta.blog.dto.PostResponseDto;
 import com.sparta.blog.entity.Post;
+import com.sparta.blog.entity.User;
 import com.sparta.blog.repository.PostRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
 
-    public PostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
-    }
+    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
+        // RequestDto -> Entity(게시글 생성)
+        Post post = new Post(requestDto);
+        post.setUser(user);
+        // DB 저장
+        postRepository.save(post);
 
-    @Deprecated
-    public List<PostResponseDto> getPostListV1() { //1. 리스트 반복하며 넣어주기
-        List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
-        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
-        for (Post post : postList) {
-            postResponseDtoList.add(new PostResponseDto(post));
-        }
-        return postResponseDtoList;
-    }
-
-    public List<PostResponseDto> getPostListV2() { //2. Stream 형태로 변환해서 리스트로 바로 만들어주기
-        return postRepository.findAllByOrderByModifiedAtDesc().stream().map(PostResponseDto::new).toList();
-    }
-
-    public PostResponseDto getPost(Long id) { //단건 조회
-        Post post = findPost(id);
         return new PostResponseDto(post);
     }
 
+    public PostListResponseDto getPosts(){
+        List<PostResponseDto> postList = postRepository.findAll().stream().map(PostResponseDto::new).collect(Collectors.toList());
+        return new PostListResponseDto(postList);
+    }
 
-    public PostResponseDto createPost(PostRequestDto requestDto) {
-
-        // RequestDto -> Entity(게시글 생성)
-        Post post = new Post(requestDto);
-
-        // DB 저장
-        Post savePost = postRepository.save(post);
-
-        // Entity -> ResponseDto
-        PostResponseDto postResponseDto = new PostResponseDto(post);
-
-        return postResponseDto;
+    public PostResponseDto getPostById(Long id) {
+        Post post = findPost(id);
+        return new PostResponseDto(post);
     }
 
     @Transactional
-    public PostResponseDto updatePost(Long id, PostRequestDto requestDto) {
+    public PostResponseDto updatePost(Long id, PostRequestDto requestDto, User user) {
         // 해당 포스트가 DB에 존재하는지 확인
         Post post = findPost(id);
-        // 비밀번호 체크
-        post.checkPassword(requestDto.getPassword());
+        if(!post.getUser().equals(user)) {
+            throw new RejectedExecutionException();
+        }
         // post 내용 수정
         post.setTitle(requestDto.getTitle());
-        post.setUsername(requestDto.getUsername());
-        post.setContents(requestDto.getContents());
+        post.setContent(requestDto.getContent());
 
         return new PostResponseDto(post);
     }
 
-    public void deletePost(Long id, String password) {
+    public void deletePost(Long id, User user) {
         // 해당 포스트가 DB에 존재하는지 확인
         Post post = findPost(id);
-        // 비밀번호 체크
-        post.checkPassword(password);
+        if(!post.getUser().equals(user)) {
+            throw new RejectedExecutionException();
+        }
         // post 삭제
         postRepository.delete(post);
     }
 
-    private Post findPost(Long id) {
+    private Post findPost(Long id) {// 없으면 예외 던져주기
         return postRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("선택한 포스트는 존재하지 않습니다.")
         );
     }
+
 }
