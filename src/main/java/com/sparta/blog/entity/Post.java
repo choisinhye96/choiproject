@@ -21,7 +21,7 @@ public class Post extends TimeStamped {
     @Column(nullable = false)
     private String content;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
 
