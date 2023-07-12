@@ -5,6 +5,7 @@ import com.sparta.blog.dto.PostRequestDto;
 import com.sparta.blog.dto.PostResponseDto;
 import com.sparta.blog.entity.Post;
 import com.sparta.blog.entity.User;
+import com.sparta.blog.entity.UserRoleEnum;
 import com.sparta.blog.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,6 @@ public class PostService {
         post.setUser(user);
         // DB 저장
         postRepository.save(post);
-
         return new PostResponseDto(post);
     }
 
@@ -43,7 +43,8 @@ public class PostService {
     public PostResponseDto updatePost(Long id, PostRequestDto requestDto, User user) {
         // 해당 포스트가 DB에 존재하는지 확인
         Post post = findPost(id);
-        if(!post.getUser().equals(user)) {
+        //게시글 작성자(post.user)와 요청자(user)가 같은지 또는 Admin인지 체크(아니면 예외발생)
+        if(!(user.getRole().equals(UserRoleEnum.ADMIN) || post.getUser().equals(user))) {
             throw new RejectedExecutionException();
         }
         // post 내용 수정
@@ -54,9 +55,10 @@ public class PostService {
     }
 
     public void deletePost(Long id, User user) {
-        // 해당 포스트가 DB에 존재하는지 확인
+        //해당 포스트가 DB에 존재하는지 확인
         Post post = findPost(id);
-        if(!post.getUser().equals(user)) {
+        //게시글 작성자(post.user)와 요청자(user)가 같은지 또는 Admin인지 체크(아니면 예외발생)
+        if(!(user.getRole().equals(UserRoleEnum.ADMIN) || post.getUser().equals(user))) {
             throw new RejectedExecutionException();
         }
         // post 삭제
@@ -68,5 +70,4 @@ public class PostService {
                 new IllegalArgumentException("선택한 포스트는 존재하지 않습니다.")
         );
     }
-
 }
