@@ -65,7 +65,7 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    private Post findPost(Long id) {// 없으면 예외 던져주기
+    public Post findPost(Long id) {// 없으면 예외 던져주기
         return postRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("선택한 포스트는 존재하지 않습니다.")
         );
