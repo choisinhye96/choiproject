@@ -47,7 +47,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(id).orElseThrow();
         // 요청자가 운영자이거나 댓글 작성자(post.user)와 요청자(user)가 같은지 체크
         if (!user.getRole().equals(UserRoleEnum.ADMIN) && !comment.getUser().equals(user)) {
-            throw new RejectedExecutionException();
+            throw new RejectedExecutionException(); //아닐 경우 예외 던짐
         }
         commentRepository.delete(comment);
     }

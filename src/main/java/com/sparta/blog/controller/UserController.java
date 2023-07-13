@@ -22,20 +22,28 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
 
-    @PostMapping("/signup")
-    public ResponseEntity<ApiResponseDto> sigUp (@Valid @RequestBody AuthRequestDto requestDto) {
-        userService.signup(requestDto);
-        return ResponseEntity.status(201).body(new ApiResponseDto("회워가입 성공", HttpStatus.CREATED.value()));
+    @PostMapping("/signup") //회원 가입
+    public ResponseEntity<ApiResponseDto> signUp(@Valid @RequestBody AuthRequestDto requestDto) {
+        try {
+            userService.signup(requestDto);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ApiResponseDto("중복된 username 입니다.", HttpStatus.BAD_REQUEST.value()));
+        }
+        return ResponseEntity.status(201).body(new ApiResponseDto("회원가입 성공", HttpStatus.CREATED.value()));
     }
 
     //로그인
     @PostMapping("/login")
     public ResponseEntity<ApiResponseDto> login(@RequestBody AuthRequestDto loginRequestDto, HttpServletResponse response) {
-        userService.login(loginRequestDto);
+        try {
+            userService.login(loginRequestDto);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ApiResponseDto("회원을 찾을 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
+        }
 
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(loginRequestDto.getUsername()));
+        //JWT 생성 및 쿠키에 저장 후 Response 객체에 추가
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(loginRequestDto.getUsername(), loginRequestDto.getRole()));
 
         return ResponseEntity.ok().body(new ApiResponseDto("로그인 성공", HttpStatus.CREATED.value()));
-
     }
 }

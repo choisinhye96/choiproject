@@ -1,8 +1,10 @@
 package com.sparta.blog.jwt;
 
+import com.sparta.blog.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -20,6 +22,8 @@ import java.util.Date;
 public class JwtUtil {
     //Header KEY 값
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    // 사용자 권한 키값. 사용자 권한도 토큰안에 넣어주기 때문에 그때 사용하는 키값
+    public static final String AUTHORIZATION_KEY = "auth";
     //토큰 식별자
     public static final String BEARER_PREFIX = "Bearer ";
 
@@ -31,6 +35,7 @@ public class JwtUtil {
     //로그 설정
     private static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
 
+    @PostConstruct
     public void init() {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(bytes);
@@ -45,7 +50,7 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String username) {
+    public String createToken(String username, UserRoleEnum role) {
         Date date = new Date();
 
         // 토큰 만료시간
@@ -54,6 +59,7 @@ public class JwtUtil {
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(username)// 사용자 식별자값(ID)
+                        .claim(AUTHORIZATION_KEY, role)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))//만료 시간
                         .setIssuedAt(date) //발급일
                         .signWith(key, signatureAlgorithm) //암호화 알고리즘

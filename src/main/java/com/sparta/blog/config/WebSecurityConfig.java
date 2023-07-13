@@ -1,5 +1,6 @@
 package com.sparta.blog.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.blog.jwt.JwtAuthorizationFilter;
 import com.sparta.blog.jwt.JwtUtil;
 import com.sparta.blog.security.UserDetailsServiceImpl;
@@ -23,12 +24,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * WebSecurityConfig > jwtUtil > UsernamePasswordAuthenticationFilter > SecurityFilterChain > 요청별 인증수행
  */
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity //Spring Security 지원을 가능하게 함
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -40,7 +42,7 @@ public class WebSecurityConfig {
     }
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, objectMapper);
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -54,7 +56,7 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()//resources 접근 허용 설정
                         .requestMatchers("/api/auth/**").permitAll()//'/api/auth/'로 시작하는 요청 접근 모두 허용
-                        .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()//'GET/api/post'로 시작하는 요청 접근 모두 허용
+                        .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()//'GET/api/posts'로 시작하는 요청 접근 모두 허용
                         .anyRequest().authenticated()//그 외 모든 요청 인증처리
                 );
         //필터 관리
