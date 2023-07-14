@@ -51,4 +51,9 @@ public class CommentService {
         }
         commentRepository.delete(comment);
     }
+    public Post findComment(Long id) {// 없으면 예외 던져주기
+        return commentRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("선택한 댓글은 존재하지 않습니다.")
+        ).getPost();
+    }
 }

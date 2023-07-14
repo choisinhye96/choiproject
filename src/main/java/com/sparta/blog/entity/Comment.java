@@ -17,7 +17,7 @@ public class Comment extends TimeStamped {
     @Column(nullable = false)
     private String body;
 
-    @ManyToOne
+    @ManyToOne //여러개의 댓글을 한 게시글에 작성할 수 있음
     @JoinColumn(name = "post_id") //fk
     private Post post; //댓글은 게시글과 연관관계를 가지고 있음
 
