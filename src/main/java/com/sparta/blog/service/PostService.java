@@ -5,69 +5,63 @@ import com.sparta.blog.dto.PostRequestDto;
 import com.sparta.blog.dto.PostResponseDto;
 import com.sparta.blog.entity.Post;
 import com.sparta.blog.entity.User;
-import com.sparta.blog.entity.UserRoleEnum;
-import com.sparta.blog.repository.PostRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.stream.Collectors;
+public interface PostService {
+    /**
+     * 게시글 생성
+     * @param requestDto 게시글 생성 요청정보
+     * @param user 게시글 생성 요청자
+     * @return 게시글 생성 결과
+     */
+    PostResponseDto createPost(PostRequestDto requestDto, User user);
 
-@Service
-@RequiredArgsConstructor
-public class PostService {
-    private final PostRepository postRepository;
+    /**
+     * 전체 게시글 목록 조회
+     * @return 전체 게시글 목록
+     */
+    PostListResponseDto getPosts();
 
-    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
-        // RequestDto -> Entity(게시글 생성)
-        Post post = new Post(requestDto);
-        post.setUser(user);
-        // DB 저장
-        postRepository.save(post);
-        return new PostResponseDto(post);
-    }
+    /**
+     * 게시글 단건 조회
+     * @param id 조회할 게시글 ID
+     * @return 조회된 게시글 정보
+     */
+    PostResponseDto getPostById(Long id);
 
-    public PostListResponseDto getPosts(){
-        List<PostResponseDto> postList = postRepository.findAll().stream().map(PostResponseDto::new).collect(Collectors.toList());
-        return new PostListResponseDto(postList);
-    }
+    /**
+     * 게시글 업데이트
+     * @param post 업데이트 할 게시글
+     * @param requestDto 업데이트 할 게시글 정보
+     * @param user 게시글 업데이트 요청자
+     * @return 업데이트된 게시글 정보
+     */
+    PostResponseDto updatePost(Post post, PostRequestDto requestDto, User user);
 
-    public PostResponseDto getPostById(Long id) {
-        Post post = findPost(id);
-        return new PostResponseDto(post);
-    }
+    /**
+     * 게시글 삭제
+     * @param post 삭제 요청 게시글
+     * @param user 게시글 삭제 요청자
+     */
+    void deletePost(Post post, User user);
 
-    @Transactional
-    public PostResponseDto updatePost(Long id, PostRequestDto requestDto, User user) {
-        // 해당 포스트가 DB에 존재하는지 확인
-        Post post = findPost(id);
-        //게시글 작성자(post.user)와 요청자(user)가 같은지 또는 Admin인지 체크(아니면 예외발생)
-        if(!(user.getRole().equals(UserRoleEnum.ADMIN) || post.getUser().equals(user))) {
-            throw new RejectedExecutionException();
-        }
-        // post 내용 수정
-        post.setTitle(requestDto.getTitle());
-        post.setContent(requestDto.getContent());
+    /**
+     * 게시글 좋아요
+     * @param id 좋아요 요청 게시글 ID
+     * @param user 게시글 좋아요 요청자
+     */
+    void likePost(Long id, User user);
 
-        return new PostResponseDto(post);
-    }
+    /**
+     * 게시글 좋아요 취소
+     * @param id 좋아요 취소 요청 게시글 ID
+     * @param user 게시글 좋아요 취소 요청자
+     */
+    void deleteLikePost(Long id, User user);
 
-    public void deletePost(Long id, User user) {
-        //해당 포스트가 DB에 존재하는지 확인
-        Post post = findPost(id);
-        //게시글 작성자(post.user)와 요청자(user)가 같은지 또는 Admin인지 체크(아니면 예외발생)
-        if(!(user.getRole().equals(UserRoleEnum.ADMIN) || post.getUser().equals(user))) {
-            throw new RejectedExecutionException();
-        }
-        // post 삭제
-        postRepository.delete(post);
-    }
-
-    public Post findPost(Long id) {// 없으면 예외 던져주기
-        return postRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("선택한 포스트는 존재하지 않습니다.")
-        );
-    }
+    /**
+     * 게시글 Entity 단건 조회
+     * @param id 조회할 게시글 ID
+     * @return 게시글 Entity
+     */
+    Post findPost(long id);
 }

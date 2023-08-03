@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity // JPA가 관리할 수 있는 Entity 클래스 지정
@@ -28,7 +29,10 @@ public class Post extends TimeStamped {
     private User user;
     //연관관계 주인 표시
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) //게시글이 삭제되면 댓글도 같이 삭제 된다.
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) //게시글이 삭제되면 댓글도 같이 삭제 된다.
+    private List<PostLike> postLikes = new ArrayList<>();
 
     public Post(PostRequestDto requestDto) {
         this.title = requestDto.getTitle();

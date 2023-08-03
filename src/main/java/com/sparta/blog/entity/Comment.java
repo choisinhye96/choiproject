@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -24,6 +27,9 @@ public class Comment extends TimeStamped {
     @ManyToOne //여러개의 댓글을 한 유저가 작성할 수 있음
     @JoinColumn(name = "user_id")//fk
     private User user;
+
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
+    private List<CommentLike> commentLikes = new ArrayList<>();
 
     public Comment(String body) { //생성자로 생성할 때 댓글 본문만 생성
         this.body = body;
