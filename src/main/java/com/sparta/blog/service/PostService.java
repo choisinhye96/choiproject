@@ -7,6 +7,13 @@ import com.sparta.blog.entity.Post;
 import com.sparta.blog.entity.User;
 
 public interface PostService {
+    /*
+    기존 PostService를 인터페이스로 생성하고 기존 메소드들에 더 많은 메소드가 추가되야 함으로 그렇게 될 시
+    해당 클래스를 한눈에 파악하기 힘들어짐. 그래서 메소그 선언에 대한 부분을 인터페이스로 따로 빼고 구현은 임플리먼트라는
+    클래스에 만들어 줌
+    사용할 메드들의 선언과 주석(메소드들의 역할과 파라미터(매개변수들)의 설명, 리턴값에 대한 설명) 추가
+     */
+
     /**
      * 게시글 생성
      * @param requestDto 게시글 생성 요청정보

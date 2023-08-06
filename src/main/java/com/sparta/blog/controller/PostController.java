@@ -69,7 +69,7 @@ public class PostController {
         return ResponseEntity.ok().body(new ApiResponseDto("게시글 삭제 성공", HttpStatus.OK.value()));
     }
 
-    @PostMapping("/posts/{id}/like")
+    @PostMapping("/posts/{id}/like") //좋아요 생성
     public ResponseEntity<ApiResponseDto> likePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
         try {
             postService.likePost(id, userDetails.getUser());
@@ -79,7 +79,10 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ApiResponseDto("게시글 좋아요 성공", HttpStatus.ACCEPTED.value()));
     }
-    @DeleteMapping("/posts/{id}/like")
+
+    // RESTfull api의 조건 중 하나로 stateless 해야한다는 것. 이 요청이 어떤 상태값에 의존되면 안된다.(만약에 우리가 이 API를 동일하게 요청함에 있어서
+    // 이전의 요청값에 의해 상태값이 바꿔서 어쩔 떈 좋아요가 되고 어쩔 떈 좋아요 취소가 된다면 이 API는 RESRFULL한 API가 아니다. 왜냐하면 state(상태)에 의존되어있기 때문에)
+    @DeleteMapping("/posts/{id}/like") // 좋아요 취소
     public ResponseEntity<ApiResponseDto> deleteLikePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
         try {
             postService.deleteLikePost(id, userDetails.getUser());

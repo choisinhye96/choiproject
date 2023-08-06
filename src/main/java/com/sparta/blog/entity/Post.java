@@ -31,8 +31,8 @@ public class Post extends TimeStamped {
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) //게시글이 삭제되면 댓글도 같이 삭제 된다.
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) //게시글이 삭제되면 댓글도 같이 삭제 된다.
-    private List<PostLike> postLikes = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) //게시글이 삭제되면 포스트 라이크도 같이 삭제 된다.
+    private List<PostLike> postLikes = new ArrayList<>(); //만약 값이 없으면 초기값은 빈 어레이 리스트를 저장하도록 한다.
 
     public Post(PostRequestDto requestDto) {
         this.title = requestDto.getTitle();

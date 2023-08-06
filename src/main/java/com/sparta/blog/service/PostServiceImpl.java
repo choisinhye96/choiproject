@@ -53,15 +53,15 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void likePost(Long id, User user) {
-        Post post = findPost(id);
+        Post post = findPost(id); //게시글 조회
 
         // 아래 조건 코드와 동일
         // if (postLikeRepository.findByUserAndPost(user, post).isPresent()) {
         if (postLikeRepository.existsByUserAndPost(user, post)) {
             throw new DuplicateRequestException("이미 좋아요 한 게시글 입니다.");
         } else {
-            PostLike postLike = new PostLike(post, user);
-            postLikeRepository.save(postLike);
+            PostLike postLike = new PostLike(post, user); //객체 생성
+            postLikeRepository.save(postLike); // 세이브 -> db저장
         }
     }
 
